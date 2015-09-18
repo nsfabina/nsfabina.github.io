@@ -95,36 +95,38 @@ p {
 	font-size: 10pt;
 }
 
-/* Left-hand menu */
-#content {
-	width: 720px;
-	padding-top: 170px;
-	margin-left: 240px;
-	z-index: 1;
-}
-#content ul {
-  padding: 0px 40px;
-  font-family: Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #848484;
-	font-size: 10pt;
-}
-#content li {
-  list-style-type:disc;
-}
-#menu-wrapper {
-	height: 100%;
-	padding-top: 120px;
-	float: left;
-	width: 140px;
-}
-#menu-header {
+/* Header */
+#header-wrapper {
 	position: fixed;
-  padding-left: 10px;
+	top: 0px;
+	width: 100%;
+	height: 60px;
+	background-color: #000;
+}
+#header {
+	width: 960px;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	vertical-align: center;
+}
+#header h4 {
+	color: #FFF;
+	font-size: 24pt;
+	font-weight: bold;
+}
+
+/* Menu */
+#menu-wrapper {
+	position: fixed;
+	top: 10%;
+	width: 140px;
+	height: 80%;
+	float: left;
 }
 #menu-main {
 	position: fixed;
-	padding-top: 60px;
+	padding-top: 40px;
 	padding-left: 40px;
 }
 #menu-main a {
@@ -141,46 +143,60 @@ p {
 #menu-main .selected {
 	color: #121212;
 }
-#menu-footer {
+
+/* Footer */
+#footer-wrapper {
 	position: fixed;
-	bottom: 10px;
-	left: 20px;
+	top: 90%;
+	width: 140px;
+	height: 10%;
+	float: left;
 }
 #footer-box {
-	width: 96px;
-	height: 22px;
 	position: fixed;
-	bottom: 40px;
-	left: 30px;
+	vertical-align: center;
+	padding-left: 30px;
 }
 #footer-box li {
 	float: left;
 	padding-left: 6px;
-	display: inline;
+	display: block;
 }
 .email a {
 	background-image: url(../icons/email.png);
-	background-position: 0 0px;
 	display: block;
 	height: 25px;
 	padding-left: 25px;
-	background-repeat: no-repeat
 }
 .github a {
 	background-image: url(../icons/github.png);
-	background-position: 0 0px;
 	display: block;
 	height: 25px;
 	padding-left: 25px;
-	background-repeat: no-repeat
 }
 .linkedin a {
 	background-image: url(../icons/linkedin.png);
-	background-position: 0 0px;
 	display: block;
 	height: 25px;
 	padding-left: 25px;
-	background-repeat: no-repeat
+}
+
+/* Content */
+#content {
+	width: 780px;
+	padding-top: 10%;
+	margin-left: 180px;
+	z-index: 1;
+}
+#content ul {
+ 	padding: 0px 40px;
+ 	font-family: Verdana, Arial, sans-serif;
+ 	line-height: 1.6em;
+ 	color: #848484;
+	font-size: 10pt;
+}
+#content li {
+  list-style-type:disc;
 }
 
 /* Hard override for bold */
