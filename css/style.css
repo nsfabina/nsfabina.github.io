@@ -126,8 +126,8 @@ p {
 }
 #menu-main {
 	position: fixed;
-	padding-top: 40px;
-	padding-left: 40px;
+	padding-top: 60px;
+	padding-left: 30px;
 }
 #menu-main a {
 	color: #707070;
