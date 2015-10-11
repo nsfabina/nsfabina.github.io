@@ -102,6 +102,10 @@ p {
 	width: 100%;
 	height: 60px;
 	background-color: #000;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 }
 #header {
 	width: 960px;
@@ -183,7 +187,7 @@ p {
 
 /* Content */
 #content {
-	width: 780px;
+	width: 800px;
 	padding-top: 10%;
 	padding-left: 180px;
 	padding-bottom: 100px;
@@ -203,7 +207,47 @@ p {
  	font-style: italic;
 }
 
-/* Hard override for bold */
+/* Code */
+pre {
+	display: block;
+	width: 710px;
+	margin-left: 50px;
+	border: none !important;
+}
+code.block, samp {
+	display: block;
+	padding: 10px;
+	font-family: monospace;
+	font-size: 14px;
+	line-height: 1.4em;
+	background-color: rgba(0, 0, 0, 0.05);
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+	white-space: pre;
+	overflow-x: auto;
+}
+code.inline {
+	font-family: monospace;
+	background-color: rgba(0, 0, 0, 0.05);
+	padding: 5px;
+}
+pre .kwd { color: rgba(0, 0, 225, 1); font-weight: bold } /* imports */
+pre .com { color: rgba(0, 125, 0, 1) }    /* comments */
+pre .pln { color: rgba(0, 0, 0, .7) }    /* plaintext */
+pre .str { color: rgba(0, 100, 240, 1) }   /* strings */
+pre .lit { color: rgba(0, 200, 255, 1) }        /* literal */
+pre .pun { color: rgba(0, 0, 0, .7) }    /* punctuation */
+pre .dec { color: rgba(0, 0, 0, .7) }            /* decimal */
+pre .typ { color: rgba(100, 0, 255, 1) }   /* type */
+pre .atn { color: rgba(255, 0, 0, 1); font-weight: bold } /* attribute name */
+pre .atv { color: rgba(255, 0, 0, 1) } /* attribute value */
+pre .tag { color: rgba(0, 255, 255, 1); font-weight: bold } /* imports or html/xml tag */
+
+/* Hard overrides */
 strong, b {
     font-weight: bold;
+}
+i {
+	font-style: italic;
 }
