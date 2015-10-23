@@ -1,0 +1,190 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>Regression to the Fabean</title>
+  <meta charset="utf-8">
+  <meta name="author" content="Nicholas Fabina">
+  <link rel="stylesheet" href="../css/style.css">
+  <!--<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=python"></script>-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="data.json"></script>
+</head>
+
+<body>
+
+<div id="header-wrapper">
+  <div id="header">
+    <h4>Regression to the Fabean
+      <span style="float:right;">Nicholas Fabina</span>
+    </h4>
+  </div>
+</div>
+
+<div id="menu-wrapper">
+  <div id="menu-main">
+    <ul>
+      <li><a href="../index.html">About</a></li>
+      <li><a class="selected" href="../blog.html">Blog</a></li>
+      <li><a href="../resume.html">Resume</a></li>
+      <li><a href="../colleagues.html">Colleagues</a></li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
+  </div>
+</div>
+
+<div id="footer-wrapper">
+  <div id="footer-box">
+    <ul>
+        <li><div class="email"><a href="mailto:nicholas.fabina@gmail.com"></a></div></li>
+        <li><div class="github"><a href="https://github.com/nsfabina"></a></div></li>
+        <li><div class="linkedin"><a href="https://linkedin.com/in/nsfabina"></a></div></li>
+    </ul>
+  </div>
+</div>
+
+<div id="content">
+  <h5>How similar are Bernie Sanders' and Hillary Clinton's voting records?</h5>
+
+  <p>In <a href="voting_similarity.html">my last post</a>, we compared the voting records of Bernie Sanders and Hillary Clinton using pairwise comparisons of similarity values. Here, we use the same, openly-available voting record data to evaluate similarity patterns across all Senators. Two notes:  first, the iPython notebook with our code from the previous post is located <a href="../code/voting_similarity.ipynb">here</a> and, second, this page uses Javascript for interactive visualizations (so you may want to temporarily allow scripts if you're using an ad-blocker).</p>
+
+  <p>Previously, we were calculating and comparing the similarity of voting records between any two Senators. As an example, we were comparing the list of Bernie's Yea's and Nay's to Hillary's Yea's and Nay's to calculate how often they cast the same vote. Now, we want to be able to compare Senators based on the overall similarity patterns. For instance, even if Bernie and Hillary are not very similar using a direct, pairwise comparison, they may be very similar in terms of relationships to all other Senators. One trivial example of this could be that Bernie and Hillary are both very similar to Democrats and very dissimilar to Republicans.</p>
+
+  <p>Why do we care about comparisons among all Senators if we can do pairwise comparisons so easily? Well, pairwise comparisons are useful for answering questions like:</p>
+    <ul>
+      <li>how similar are Senator X and Y's voting records?</li>
+      <li>which Senator has the most similar voting record to Senator X?</li>
+    </ul>
+  <p>In contrast, whole-group analyses are useful for answering questions like:</p>
+    <ul>
+      <li>what groups of Senators are most likely to vote together?</li>
+      <li>how many distinct voting groups are there?</li>
+    </ul>
+
+  <p>Again, we'll follow the structure of (<b>TODO links</b>) cleaning data, analyzing data, and visualizing metrics.</p>
+
+  <h5>Cleaning data</h5>
+
+  <p>One of the first things we need to do is remove Senators that have no valid, pairwise similarities. This occurs when a Senator in our dataset cannot be compared to any of the other Senators, likely due to not having enough recorded votes. Their presence in the dataset did not influence pairwise comparisons, but could muddy our new analyses or visualizations.</p>
+
+  <pre class="prettyprint"><code class="block"># Remove senators with no meaningful similarity values
+idx_keep = np.where(np.isfinite(similarities.sum(axis=1)))[0]
+similarities = similarities.iloc[idx_keep, idx_keep]</code></pre>
+
+  <p></p>
+
+  <h5>Formatting data</h5>
+
+  <p>Our goal is to identify and explore groupings of these Senators. Often, the simple answer to grouping or clustering some data is to use an algorithm like K-means clustering, support vector machines (SVM), or decision trees. However, one concern is that our dataset has numerous dimensions, with our matrix being approximately 200 x 200, for one comparison for every pair of Senators. For this reason, many common clustering algorithms will not perform well on our sparse dataset.</p>
+
+  <p>Instead, we can use a network, or graph, to compare group-level patterns. Networks have been used in this fashion to model how:
+    <ul>
+      <li>colds spread through schools based on grade level and gender,</li>
+      <li>energy transfers among species based on trophic level or size, or</li>
+      <li>websites link to one another based on in- and out- degree.</li>
+    </ul>
+  We can use networks to explore the relationships between our Senators, almost like a social network, where the links between Senators represent their similarity. Senators can have a strong positive relationship (very similar), a strong negative relationship (very dissimilar), or a neutral relationship. Note that a neutral relationship, when the similarity value is 0, is different than having no relationship, which occurs when the two Senators cannot be compared due to insufficient overlap in their tenure.</p>
+
+  <p><b>TODO insert toy network</b></p>
+
+
+Note 1:  incidence matrices are composed of zeros and ones and describe the existence of a relationship between two nodes. Adjacency matrices are composed of non-negative values and describe the magnitude of a relationship between two nodes. Our similarity matrix has weights with meaning, so we treat it as an adjacency matrix.
+
+Note 2:  directed networks or graphs have edges with direction between nodes, such that edges could move from node A to node B, from node B to node A, or both directions. We want an undirected network, since the similarity of Senator A to Senator B is the same as the similarity of Senator B to Senator A.
+
+Note 3:  many network algorithms assume that edge weights are positive, whereas our similarity values range from -1 to 1. I'm going to scale those values so that they range from 0 to 1, since the absolute value is relatively unimportant for our purposes and this translation preserves relative relationships.
+
+  <div class="figure" id="toy_network"></div>
+
+  <div class="figure" id="fig1"></div>
+  
+</div>
+
+<script type="text/javascript">
+  var height = 500;
+  var width = 600;
+  var buffer = 50;
+  var min_xy = -0.05
+  var max_xy = 1.05
+  var scale_x = d3.scale.linear()
+    .domain([min_xy, max_xy])
+    .range([buffer, width - buffer]);
+  var scale_y = d3.scale.linear()
+    .domain([min_xy, max_xy])
+    .range([height - buffer, buffer]);
+  var axis_x = d3.svg.axis()
+    .scale(scale_x)
+    .orient("bottom")
+    .ticks(5);
+  var axis_y = d3.svg.axis()
+    .scale(scale_y)
+    .orient("left")
+    .ticks(5);
+  var svg = d3.select("#fig1")
+    .append("svg")
+    .attr({
+      "height": height,
+      "width": width
+    });
+  var points = svg.append("g")
+    .selectAll("circle")
+    .data(dataset)
+    .enter()
+    .append("circle")
+    .attr({
+      "cx": function(d) { return scale_x(d['degree']) },
+      "cy": function(d) { return scale_y(d['betweenness']) },
+      "r": 5,
+      "fill": function(d) { 
+        return "rgba(0, 0, 200, .5)"
+      },
+      "stroke": "rgba(0, 0, 150, .5)"
+    })
+    .on("mouseover", function(d) {
+      var name = d['firstname'] + ' ' + d['lastname']
+      var party = 'TODO'
+      svg.append("text")
+        .attr({
+          "x": width / 5,
+          "y": height / 5,
+          "id": "tooltip"
+        })
+        .html(name + party)
+    })
+    .on("mouseout", function(d) {
+      d3.select("#tooltip").remove()
+    });
+  svg.append("g")
+    .attr({
+      "class": "axis",
+      "transform": "translate(0, " + (height - buffer) + ")"
+    })
+    .call(axis_x);
+  svg.append("g")
+    .attr({
+      "class": "axis",
+      "transform": "translate(" + buffer + ", 0)"
+    })
+    .call(axis_y);
+  svg.append("text")
+    .attr({
+      "x": width / 2,
+      "y": height - 10,
+      "text-anchor": "middle"
+  })
+    .text("Similarity to Democrats");
+  svg.append("text")
+    .attr({
+      "x": - height / 2,
+      "y": 10,
+      "text-anchor": "middle"
+    })
+    .attr("transform", "rotate(-90)")
+    .text("Influence among Democrats");
+</script>
+
+</body>
+
+</html>
+
