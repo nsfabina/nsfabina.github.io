@@ -79,8 +79,7 @@ senators = {str(sen['person']['id']): {
 
   <p>At the time of this writing, this returns a dictionary with records for <code class="inline">201</code> Senators, each similar to this:</p>
 
-  <pre class="prettyprint"><code class="block">
-bernie_id = [id_ for id_, sen in senators.items()
+  <pre class="prettyprint"><code class="block">bernie_id = [id_ for id_, sen in senators.items()
              if sen['lastname'] == 'Sanders' and
                  sen['firstname'] == 'Bernie'][0]
 print senators[bernie_id]</code><samp>{'name': u'Sen. Bernard \u201cBernie\u201d Sanders [I-VT]',
