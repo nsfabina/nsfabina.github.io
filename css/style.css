@@ -17,15 +17,16 @@
 	margin-right: 1rem;
 }
 #navbar a:hover {
-	color: rgb(0, 102, 204);
+	color: rgb(0, 51, 153);
 }
 #selected {
-	color: rgb(0, 102, 204);
+	color: rgb(0, 51, 153);
 }
 
 /* Icons */
 #icons {
 	margin-top: 3rem;
+	margin-bottom: 5rem;
 }
 #icons ul {
 	display: inline-block;
