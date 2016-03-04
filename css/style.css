@@ -60,6 +60,10 @@
 li {
 	list-style: none;
 }
+.list-styled li {
+	margin-left: 2rem;
+	list-style: disc;
+}
 a {
 	text-decoration: none;
 }
