@@ -1,191 +1,71 @@
-/* CSS reset */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
-/* General */					
-h1 {
-	font-family: 'Droid Serif', Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #454544;
-	text-decoration: none;
-	font-size: 26pt;
-}
-h2 {
-	font-family: 'Droid Serif', Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #454544;
-	text-decoration: none;
-	font-size: 22pt;
-}
-h3 {
-	font-family: 'Droid Serif', Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #454544;
-	text-decoration: none;
-	font-size: 20pt;
-}
-h4 {
-	font-family: 'Droid Serif', Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #454544;
-	text-decoration: none;
-	font-size: 18pt;
-}
-h5 {
-	font-family: 'Droid Serif', Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #454544;
-	text-decoration: none;
-	font-size: 16pt;
-}
-h6 {
-	font-family: 'Droid Serif', Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #454544;
-	text-decoration: none;
-	font-size: 14pt;
-}
-p {
-  padding: 10px;
-	font-family: Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #848484;
-	font-size: 10pt;
-}
+/* Imports */
+@import "normalize.css";
+@import "skeleton.css";
 
 /* Header */
-#header-wrapper {
-	position: fixed;
-	top: 0px;
-	width: 100%;
-	height: 60px;
-	background-color: #000;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  cursor: default;
+#navbar {
+	margin-top: 5rem;
+	margin-bottom: 5rem;
 }
-#header {
-	width: 960px;
-	padding-left: 20px;
-	padding-right: 40px;
-	text-align: left;
-	vertical-align: center;
-}
-#header h4 {
-	color: #FFF;
-	font-size: 24pt;
-	font-weight: bold;
-}
-
-/* Menu */
-#menu-wrapper {
-	position: fixed;
-	top: 60px;
-	width: 140px;
-	height: 80%;
-	float: left;
-}
-#menu-main {
-	position: fixed;
-	padding-top: 60px;
-	padding-left: 30px;
-}
-#menu-main a {
-	color: #707070;
-	text-decoration: none;
-	font-size: 16pt;
-}
-#menu-main a:hover {
-	color: #121212;
-}
-#menu-main li {
-	padding: 5px 0 5px 0;
-}
-#menu-main .selected {
-	color: #121212;
-}
-
-/* Footer */
-#footer-wrapper {
-	position: fixed;
-	top: 90%;
-	width: 140px;
-	height: 10%;
-	float: left;
-}
-#footer-box {
-	position: fixed;
-	vertical-align: center;
-	padding-left: 30px;
-}
-#footer-box li {
-	float: left;
-	padding-left: 6px;
+#navbar ul {
 	display: block;
+	float: right;
 }
-.email a {
+#navbar li {
+	float: right;
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+#navbar a:hover {
+	color: rgb(0, 102, 204);
+}
+#selected {
+	color: rgb(0, 102, 204);
+}
+
+/* Icons */
+#icons {
+	margin-top: 3rem;
+}
+#icons ul {
+	display: inline-block;
+}
+#icons li {
+	float: left;
+	margin-left: .5rem;
+	margin-right: .5rem;
+}
+#icons a {
+	display: block;
+	height: 25px;
+	width: 25px;
+}
+#email {
 	background-image: url(../icons/email.png);
-	display: block;
-	height: 25px;
-	padding-left: 25px;
 }
-.github a {
+#github {
 	background-image: url(../icons/github.png);
-	display: block;
-	height: 25px;
-	padding-left: 25px;
 }
-.linkedin a {
+#linkedin {
 	background-image: url(../icons/linkedin.png);
-	display: block;
-	height: 25px;
-	padding-left: 25px;
 }
 
-/* Content */
+/* Formatting */
+.container {
+	background-color: rgb(255, 255, 255);
+}
+.center {
+    text-align: center;
+}
+li {
+	list-style: none;
+}
+a {
+	text-decoration: none;
+}
+
+
+/*
 #content {
 	width: 800px;
 	padding-top: 10%;
@@ -207,7 +87,7 @@ p {
  	font-style: italic;
 }
 
-/* Code */
+
 pre {
 	display: block;
 	width: 710px;
@@ -244,7 +124,7 @@ pre .atn { color: rgba(255, 0, 0, 1); font-weight: bold } /* attribute name */
 pre .atv { color: rgba(255, 0, 0, 1) } /* attribute value */
 pre .tag { color: rgba(0, 255, 255, 1); font-weight: bold } /* imports or html/xml tag */
 
-/* Figures */
+/*
 .figure {
 	width: 660px;
 	margin-left: 100px;
@@ -259,7 +139,6 @@ text, .axis text {
   font-size: 14px;
 }
 
-/* Formatting */
 strong, b {
     font-weight: bold;
 }
