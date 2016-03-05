@@ -4,16 +4,15 @@
 
 /* Header */
 #navbar {
-	margin-top: 5rem;
-	margin-bottom: 5rem;
+	margin-top: 3rem;
 }
 #navbar ul {
 	display: inline-block;
 }
 #navbar li {
 	float: left;
-	margin-left: 4rem;
-	margin-right: 4rem;
+	margin-left: 3rem;
+	margin-right: 3rem;
 }
 #navbar a:hover {
 	color: rgb(0, 51, 153);
@@ -54,6 +53,10 @@
 .container {
 	background-color: rgb(255, 255, 255);
 }
+.row {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+}
 .center {
     text-align: center;
 }
@@ -66,86 +69,4 @@ li {
 }
 a {
 	text-decoration: none;
-}
-
-
-/*
-#content {
-	width: 800px;
-	padding-top: 10%;
-	padding-left: 180px;
-	padding-bottom: 100px;
-	z-index: 1;
-}
-#content ul {
- 	padding: 0px 40px;
- 	font-family: Verdana, Arial, sans-serif;
- 	line-height: 1.6em;
- 	color: #848484;
-	font-size: 10pt;
-}
-#content li {
- 	list-style-type:disc;
-}
-#content q {
- 	font-style: italic;
-}
-
-
-pre {
-	display: block;
-	width: 710px;
-	margin-left: 50px;
-	border: none !important;
-}
-code.block, samp {
-	display: block;
-	padding: 10px;
-	font-family: monospace;
-	font-size: 14px;
-	line-height: 1.4em;
-	background-color: rgba(0, 0, 0, 0.05);
-	-moz-tab-size: 4;
-	-o-tab-size: 4;
-	tab-size: 4;
-	white-space: pre;
-	overflow-x: auto;
-}
-code.inline {
-	font-family: monospace;
-	background-color: rgba(0, 0, 0, 0.05);
-	padding: 5px;
-}
-pre .kwd { color: rgba(0, 0, 225, 1); font-weight: bold } /* imports */
-pre .com { color: rgba(0, 125, 0, 1) }    /* comments */
-pre .pln { color: rgba(0, 0, 0, .7) }    /* plaintext */
-pre .str { color: rgba(0, 100, 240, 1) }   /* strings */
-pre .lit { color: rgba(0, 200, 255, 1) }        /* literal */
-pre .pun { color: rgba(0, 0, 0, .7) }    /* punctuation */
-pre .dec { color: rgba(0, 0, 0, .7) }            /* decimal */
-pre .typ { color: rgba(100, 0, 255, 1) }   /* type */
-pre .atn { color: rgba(255, 0, 0, 1); font-weight: bold } /* attribute name */
-pre .atv { color: rgba(255, 0, 0, 1) } /* attribute value */
-pre .tag { color: rgba(0, 255, 255, 1); font-weight: bold } /* imports or html/xml tag */
-
-/*
-.figure {
-	width: 660px;
-	margin-left: 100px;
-}
-.axis path, .axis line {
-  fill: none;
-  stroke: rgba(0, 0, 0, 1);
-  shape-rendering: crispEdges;
-}
-text, .axis text {
-  font-family: sans-serif;
-  font-size: 14px;
-}
-
-strong, b {
-    font-weight: bold;
-}
-i {
-	font-style: italic;
 }
