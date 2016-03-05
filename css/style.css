@@ -8,11 +8,10 @@
 	margin-bottom: 5rem;
 }
 #navbar ul {
-	display: block;
-	float: right;
+	display: inline-block;
 }
 #navbar li {
-	float: right;
+	float: left;
 	margin-left: 1rem;
 	margin-right: 1rem;
 }
