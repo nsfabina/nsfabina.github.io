@@ -6,14 +6,6 @@
 #navbar {
 	margin-top: 3rem;
 }
-#navbar ul {
-	display: inline-block;
-}
-#navbar li {
-	float: left;
-	margin-left: 3rem;
-	margin-right: 3rem;
-}
 #navbar a:hover {
 	color: rgb(0, 51, 153);
 }
