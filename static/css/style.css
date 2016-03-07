@@ -5,6 +5,7 @@
 /* Header */
 #navbar {
 	margin-top: 3rem;
+	margin-bottom: 5rem;
 }
 #navbar a:hover {
 	color: rgb(0, 51, 153);
