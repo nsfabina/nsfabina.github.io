@@ -15,19 +15,19 @@
 <div class="container">
   <div id="navbar" class="row center">
     <div class="three columns">
-      <h5><a id="selected" href="index.html">Nicholas Fabina</a></h5>
+      <h5><a id="selected" href="/">Nicholas Fabina</a></h5>
     </div>
     <div class="two columns">
-      <h5><a href="portfolio.html">Portfolio</a></h5>
+      <h5><a href="portfolio">Portfolio</a></h5>
     </div>
     <div class="two columns">
-      <h5><a href="cv.html">CV</a></h5>
+      <h5><a href="cv">CV</a></h5>
     </div>
     <div class="three columns">
-      <h5><a href="colleagues.html">Colleagues</a></h5>
+      <h5><a href="colleagues">Colleagues</a></h5>
     </div>
     <div class="two columns">
-      <h5><a href="contact.html">Contact</a></h5>
+      <h5><a href="contact">Contact</a></h5>
     </div>
   </div>
 
@@ -43,13 +43,13 @@
 
   <div class="row center">
     <div class="three columns offset-by-one-and-one-half">
-      <p><a href="contact.html">Get in touch regarding full-time or consulting opportunities</a></p>
+      <p><a href="contact">Get in touch regarding full-time or consulting opportunities</a></p>
     </div>
     <div class="three columns">
-      <p><a href="portfolio.html">Check out code samples and data visualizations in my portfolio</a></p>
+      <p><a href="portfolio">Check out code samples and data visualizations in my portfolio</a></p>
     </div>
     <div class="three columns">
-      <p><a href="cv.html">Explore experiences and skills on my CV</a></p>
+      <p><a href="cv">Explore experiences and skills on my CV</a></p>
     </div>
   </div>
 
