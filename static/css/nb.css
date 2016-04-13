@@ -1,0 +1,61 @@
+<style>
+
+/* Notebook */
+div #notebook {
+    margin: auto;
+    padding-left: 0rem;
+}
+#notebook_panel {
+    background: rgb(245, 245, 245);
+}
+
+/* Cells */
+div.cell {
+    width: 750px;
+}
+div.cell.border-box-sizing.code_cell.running { 
+    border: 1px solid rgb(0, 0, 204);
+}
+div.cell.code_cell {
+    background-color: rgb(250, 250, 250);
+    border-color: rgb(240, 240, 240);
+    border-radius: 1px; 
+    margin-left:1rem;
+    margin-top: 1rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+h1, .h1, h2, .h2, h3, .h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+h1, .h1 {
+  font-size: 36px;
+}
+h2, .h2 {
+  font-size: 30px;
+}
+h3, .h3 {
+  font-size: 24px;
+}
+h4, .h4 {
+  font-size: 18px;
+}
+h5, .h5 {
+  font-size: 14px;
+}
+h6, .h6 {
+  font-size: 12px;
+}
+p {
+  margin: 0 0 10px;
+}
+
+</style>
