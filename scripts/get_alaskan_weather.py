@@ -11,8 +11,12 @@ import requests
 import pytz
 
 
+# To request data
 _URL_WU_API_BASE = 'http://api.wunderground.com/api/{key}/{feature}/q/{query}.json'
+_URL_MARINE_FORECAST = 'http://tgftp.nws.noaa.gov/data/raw/fz/fzak51.pafc.cwf.aer.txt'
+_SEPARATOR_MARINE_FORECAST = '\$\$'
 
+# To format API URLs for specific location
 _LATLONS = {'anchor_point': '59.7775,-151.7702',
             'anchorage': '61.2167,-149.9000',
             'cooper_landing': '60.4905,-149.7944',
@@ -27,69 +31,55 @@ _LATLONS = {'anchor_point': '59.7775,-151.7702',
             'western_kenai_peninsula': '59.8861,-151.6338'
             }
 
+# To order output
+_ORDER_CURRENT_TEMPERATURE = [
+    ('homer', 'Homer'),
+    ('anchor_point', 'Anchor Point'),
+    ('ninilchik', 'Ninilchik'),
+    ('kachemak_bay_seldovia', 'Seldovia'),
+    ('port_graham', 'Port Graham'),
+    ('nanwalek', 'Nanwalek'),
+    ('kenai', 'Kenai'),
+    ('soldotna', 'Soldotna'),
+    ('cooper_landing', 'Cooper Landing'),
+    ('anchorage', 'Anchorage')
+]
+_ORDER_FORECAST = [
+    ('western_kenai_peninsula', 'Western Kenai Peninsula'),
+    ('anchorage', 'Anchorage')
+]
+_ORDER_MARINE_FORECAST = [
+    'KACHEMAK BAY',
+    'COOK INLET NORTH OF KALGIN ISLAND',
+    'COOK INLET KALGIN ISLAND TO POINT BEDE',
+    'SHELIKOF STRAIT',
+    'BARREN ISLANDS EAST',
+    'WEST OF BARREN ISLANDS INCLUDING KAMISHAK BAY',
+    'CAPE CLEARE TO GORE POINT',
+]
 
-_STRING_DAYLIGHT = """
-Daylight
-  Sunrise:  {sunrise_hour:0>2d}:{sunrise_minute:0>2d}
-  Sunset:   {sunset_hour:0>2d}:{sunset_minute:0>2d}
-  Total:    {total_hours} hours and {total_minutes} minutes
 
-"""
-
+# To convert datetimes
 _TIMEZONE_UTC = pytz.timezone('UTC')
 _TIMEZONE_AK = pytz.timezone('US/Alaska')
 
-
-def get_total_daylight():
-    sunrise_hour, sunrise_min, sunset_hour, sunset_min = _get_sun_phase_data_from_weather_underground()
-    sunrise = _get_datetime_object_for_sun_phase(sunrise_hour, sunrise_min)
-    sunset = _get_datetime_object_for_sun_phase(sunset_hour, sunset_min)
-    daylight_hours, daylight_minutes = _get_total_daylight_hours_and_minutes(sunset - sunrise)
-    return _STRING_DAYLIGHT.format(
-        sunrise_hour=sunrise.hour,
-        sunrise_minute=sunrise.minute,
-        sunset_hour=sunset.hour,
-        sunset_minute=sunset.minute,
-        total_hours=daylight_hours,
-        total_minutes=daylight_minutes
-        )
-
-
-def _get_sun_phase_data_from_weather_underground():
-    url = _URL_WU_API_BASE.format(key=_KEY, feature='astronomy', query=_LATLONS['homer'])
-    data = json.loads(requests.get(url).text)
-    data_sunrise = data['sun_phase']['sunrise']
-    sunrise_hour = int(data_sunrise['hour'])
-    sunrise_min = int(data_sunrise['minute'])
-    data_sunset = data['sun_phase']['sunset']
-    sunset_hour = int(data_sunset['hour'])
-    sunset_min = int(data_sunset['minute'])
-    return sunrise_hour, sunrise_min, sunset_hour, sunset_min
-
-
-def _get_datetime_object_for_sun_phase(phase_hour, phase_min):
-    year, month, day = _get_datetime_in_alaska_tz()
-    return datetime.datetime(year, month, day, phase_hour, phase_min)
-
-
-def _get_datetime_in_alaska_tz():
-    datetime_utc = datetime.datetime.utcnow().replace(tzinfo=_TIMEZONE_UTC)
-    datetime_ak = datetime_utc.astimezone(_TIMEZONE_AK)
-    return datetime_ak.year, datetime_ak.month, datetime_ak.day
-
-
-def _get_total_daylight_hours_and_minutes(datetime_delta):
-    daylight_raw_minutes = datetime_delta.total_seconds() / 60
-    daylight_hours = int(daylight_raw_minutes / 60)
-    daylight_minutes = int(daylight_raw_minutes % 60)
-    return daylight_hours, daylight_minutes
-
-
+# To access API data
+_KEY_SUNRISE = 'Sunrise'
+_KEY_SUNSET = 'Sunset'
 _KEY_TIDE_HIGH = 'High Tide'
 _KEY_TIDE_LOW = 'Low Tide'
 _KEY_HOUR = 'hour'
 _KEY_MINUTE = 'minute'
 _KEY_TIDE_HEIGHT = 'height'
+
+# To output information
+_STRING_DAYLIGHT = """
+Daylight {month:0>2d}/{day:0>2d}
+  Sunrise:  {sunrise_hour:0>2d}:{sunrise_minute:0>2d}
+  Sunset:   {sunset_hour:0>2d}:{sunset_minute:0>2d}
+  Total:    {total_hours} hours and {total_minutes} minutes
+
+"""
 
 _STRING_TIDES = """
 Tides
@@ -104,21 +94,82 @@ _STRING_TIDES_DETAIL = """    {month:0>2d}/{day:0>2d}
       Low tide:   {low_hour}:{low_minute} ({low_height})
 """
 
+_STRING_CURRENT_TEMPERATURE = """
+Current temperature
+{current_temperature_detail}
+"""
 
-def get_tides():
+_STRING_CURRENT_TEMPERATURE_DETAIL = """  {city:<{padding}s}  {temperature:.0f}
+"""
+
+_STRING_FORECAST = """
+Forecast
+  Western Kenai Peninsula
+{western_kenai_peninsula_detail}
+  Anchorage
+{anchorage_detail}
+"""
+
+_STRING_FORECAST_DETAIL = """    {title}:  {forecast}
+"""
+
+
+def get_sunphase_and_tides():
     key_locations = ['kachemak_bay_seldovia', 'kenai_river']
     tide_string_details = {}
     for key_location in key_locations:
         raw_data_tides = _get_tide_data_from_weather_underground(key_location)
+        if key_location == 'kenai_river':
+            sunrise, sunset = _format_sunphase_data(raw_data_tides)
+            daylight_hours, daylight_minutes = _get_total_daylight_hours_and_minutes(sunset - sunrise)
         data_tides = _format_tide_data(raw_data_tides)
         location_details = _format_tide_detail_strings(data_tides)
         tide_string_details[key_location + '_detail'] = location_details
-    return _STRING_TIDES.format(**tide_string_details)
+    return _STRING_DAYLIGHT.format(
+            month=sunrise.month, day=sunrise.day, sunrise_hour=sunrise.hour, sunrise_minute=sunrise.minute,
+            sunset_hour=sunset.hour, sunset_minute=sunset.minute, total_hours=daylight_hours,
+            total_minutes=daylight_minutes) + \
+        _STRING_TIDES.format(**tide_string_details)
 
 
 def _get_tide_data_from_weather_underground(key_location):
     url = _URL_WU_API_BASE.format(key=_KEY, feature='tide', query=_LATLONS[key_location])
     return json.loads(requests.get(url).text)
+
+
+def _format_sunphase_data(raw_data_tides):
+    sunrise_hour = 0
+    sunrise_minute = 0
+    sunset_hour = 0
+    sunset_minute = 0
+    year, month, day = _get_tomorrow_datetime_in_alaska_tz()
+    for datum in raw_data_tides['tide']['tideSummary']:
+        date = datum['date']
+        if (int(date['year']), int(date['mon']), int(date['mday'])) != (year, month, day):
+            continue
+        hour = int(date['hour'])
+        minute = int(date['min'])
+        if datum['data']['type'] == _KEY_SUNRISE:
+            sunrise_hour, sunrise_minute = (hour, minute)
+        if datum['data']['type'] == _KEY_SUNSET:
+            sunset_hour, sunset_minute = (hour, minute)
+    sunrise = datetime.datetime(year, month, day, sunrise_hour, sunrise_minute)
+    sunset = datetime.datetime(year, month, day, sunset_hour, sunset_minute)
+    return sunrise, sunset
+
+
+def _get_tomorrow_datetime_in_alaska_tz():
+    datetime_utc = datetime.datetime.utcnow().replace(tzinfo=_TIMEZONE_UTC)
+    datetime_ak = datetime_utc.astimezone(_TIMEZONE_AK)
+    datetime_tomorrow = datetime_ak + datetime.timedelta(days=1)
+    return datetime_tomorrow.year, datetime_tomorrow.month, datetime_tomorrow.day
+
+
+def _get_total_daylight_hours_and_minutes(datetime_delta):
+    daylight_raw_minutes = datetime_delta.total_seconds() / 60
+    daylight_hours = int(daylight_raw_minutes / 60)
+    daylight_minutes = int(daylight_raw_minutes % 60)
+    return daylight_hours, daylight_minutes
 
 
 def _format_tide_data(raw_data_tides):
@@ -154,28 +205,6 @@ def _format_tide_detail_strings(data_tides):
     return ''.join(tide_string_details)
 
 
-_STRING_CURRENT_TEMPERATURE = """
-Current temperature
-{current_temperature_detail}
-"""
-
-_STRING_CURRENT_TEMPERATURE_DETAIL = """  {city:<{padding}s}  {temperature:.0f}
-"""
-
-_ORDER_CURRENT_TEMPERATURE = [
-    ('homer', 'Homer'),
-    ('anchor_point', 'Anchor Point'),
-    ('ninilchik', 'Ninilchik'),
-    ('kachemak_bay_seldovia', 'Seldovia'),
-    ('port_graham', 'Port Graham'),
-    ('nanwalek', 'Nanwalek'),
-    ('kenai', 'Kenai'),
-    ('soldotna', 'Soldotna'),
-    ('cooper_landing', 'Cooper Landing'),
-    ('anchorage', 'Anchorage')
-    ]
-
-
 def get_current_temperature():
     string_padding = max(len(city) for _, city in _ORDER_CURRENT_TEMPERATURE)
     string_temperature_details = []
@@ -190,23 +219,6 @@ def get_current_temperature():
 def _get_current_temperature_data_from_weather_underground(key_location):
     url = _URL_WU_API_BASE.format(key=_KEY, feature='conditions', query=_LATLONS[key_location])
     return json.loads(requests.get(url).text)['current_observation']['temp_f']
-
-
-_STRING_FORECAST = """
-Forecast
-  Western Kenai Peninsula
-{western_kenai_peninsula_detail}
-  Anchorage
-{anchorage_detail}
-"""
-
-_STRING_FORECAST_DETAIL = """    {title}:  {forecast}
-"""
-
-_ORDER_FORECAST = [
-    ('western_kenai_peninsula', 'Western Kenai Peninsula'),
-    ('anchorage', 'Anchorage')
-    ]
 
 
 def get_forecast():
@@ -234,20 +246,6 @@ def _format_forecast_data(raw_data_forecast):
     return data_forecast
 
 
-_URL_MARINE_FORECAST = 'http://tgftp.nws.noaa.gov/data/raw/fz/fzak51.pafc.cwf.aer.txt'
-_SEPARATOR_MARINE_FORECAST = '\$\$'
-
-_ORDER_MARINE_FORECAST = [
-    'KACHEMAK BAY',
-    'COOK INLET NORTH OF KALGIN ISLAND',
-    'COOK INLET KALGIN ISLAND TO POINT BEDE',
-    'SHELIKOF STRAIT',
-    'BARREN ISLANDS EAST',
-    'WEST OF BARREN ISLANDS INCLUDING KAMISHAK BAY',
-    'CAPE CLEARE TO GORE POINT',
-]
-
-
 def get_marine_forecast():
     # Get and split the raw text into forecasts for individual locations
     raw_text = requests.get(_URL_MARINE_FORECAST).text
@@ -269,7 +267,7 @@ if __name__ == '__main__':
     print('IMPORTANT:  DO NOT USE THIS SCRIPT MORE THAN ONCE EVERY HALF HOUR')
     output = ''
     if type_ == 'daily':
-        output = ''.join([get_total_daylight(), get_tides(), get_forecast()])
+        output = get_sunphase_and_tides() + get_forecast()
     elif type_ == 'current':
         output = get_current_temperature()
     elif type_ == 'marine':
