@@ -64,6 +64,7 @@ _TIMEZONE_UTC = pytz.timezone('UTC')
 _TIMEZONE_AK = pytz.timezone('US/Alaska')
 
 # To access API data
+_KEY_SUNPHASE_LOCATION = 'kenai_river'
 _KEY_SUNRISE = 'Sunrise'
 _KEY_SUNSET = 'Sunset'
 _KEY_TIDE_HIGH = 'High Tide'
@@ -117,13 +118,48 @@ Forecast
 _STRING_FORECAST_DETAIL = """    {title}:  {forecast}
 """
 
+def get_today_sunphase():
+    sunrise_hour, sunrise_min, sunset_hour, sunset_min = _get_sun_phase_data_from_weather_underground()
+    year, month, day = _get_today_datetime_in_alaska_tz()
+    sunrise = datetime.datetime(year, month, day, sunrise_hour, sunrise_min)
+    sunset = datetime.datetime(year, month, day, sunset_hour, sunset_min)
+    daylight_hours, daylight_minutes = _get_total_daylight_hours_and_minutes(sunset - sunrise)
+    return _STRING_DAYLIGHT.format(
+        month=month,
+        day=day,
+        sunrise_hour=sunrise.hour,
+        sunrise_minute=sunrise.minute,
+        sunset_hour=sunset.hour,
+        sunset_minute=sunset.minute,
+        total_hours=daylight_hours,
+        total_minutes=daylight_minutes
+        )
 
-def get_sunphase_and_tides():
+
+def _get_sun_phase_data_from_weather_underground():
+    url = _URL_WU_API_BASE.format(key=_KEY, feature='astronomy', query=_LATLONS[_KEY_SUNPHASE_LOCATION])
+    data = json.loads(requests.get(url).text)
+    data_sunrise = data['sun_phase']['sunrise']
+    sunrise_hour = int(data_sunrise['hour'])
+    sunrise_min = int(data_sunrise['minute'])
+    data_sunset = data['sun_phase']['sunset']
+    sunset_hour = int(data_sunset['hour'])
+    sunset_min = int(data_sunset['minute'])
+    return sunrise_hour, sunrise_min, sunset_hour, sunset_min
+
+
+def _get_today_datetime_in_alaska_tz():
+    datetime_utc = datetime.datetime.utcnow().replace(tzinfo=_TIMEZONE_UTC)
+    datetime_ak = datetime_utc.astimezone(_TIMEZONE_AK)
+    return datetime_ak.year, datetime_ak.month, datetime_ak.day
+
+
+def get_tomorrow_sunphase_and_tides():
     key_locations = ['kachemak_bay_seldovia', 'kenai_river']
     tide_string_details = {}
     for key_location in key_locations:
         raw_data_tides = _get_tide_data_from_weather_underground(key_location)
-        if key_location == 'kenai_river':
+        if key_location == _KEY_SUNPHASE_LOCATION:
             sunrise, sunset = _format_sunphase_data(raw_data_tides)
             daylight_hours, daylight_minutes = _get_total_daylight_hours_and_minutes(sunset - sunrise)
         data_tides = _format_tide_data(raw_data_tides)
@@ -300,7 +336,7 @@ if __name__ == '__main__':
     print('IMPORTANT:  DO NOT USE THIS SCRIPT MORE THAN ONCE EVERY TWO MINUTES')
     output = ''
     if type_ == 'daily':
-        output = get_sunphase_and_tides() + get_forecast()
+        output = get_today_sunphase() + get_tomorrow_sunphase_and_tides() + get_forecast()
     elif type_ == 'current':
         output = get_current_temperature()
     elif type_ == 'marine':
