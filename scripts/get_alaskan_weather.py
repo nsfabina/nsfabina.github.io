@@ -162,13 +162,6 @@ def _format_sunphase_data(raw_data_tides):
     return sunrise, sunset
 
 
-def _get_tomorrow_datetime_in_alaska_tz():
-    datetime_utc = datetime.datetime.utcnow().replace(tzinfo=_TIMEZONE_UTC)
-    datetime_ak = datetime_utc.astimezone(_TIMEZONE_AK)
-    datetime_tomorrow = datetime_ak + datetime.timedelta(days=1)
-    return datetime_tomorrow.year, datetime_tomorrow.month, datetime_tomorrow.day
-
-
 def _get_total_daylight_hours_and_minutes(datetime_delta):
     daylight_raw_minutes = datetime_delta.total_seconds() / 60
     daylight_hours = int(daylight_raw_minutes / 60)
@@ -178,16 +171,26 @@ def _get_total_daylight_hours_and_minutes(datetime_delta):
 
 def _format_tide_data(raw_data_tides):
     data_tides = {}
+    _, _, date_tomorrow = _get_tomorrow_datetime_in_alaska_tz()
     for datum in raw_data_tides['tide']['tideSummary']:
         if datum['data']['type'] not in [_KEY_TIDE_HIGH, _KEY_TIDE_LOW]:
             continue
         date = datum['date']
+        if int(date['mday']) > date_tomorrow:
+            break
         datetime_ak = datetime.datetime(int(date['year']), int(date['mon']), int(date['mday']))
         data_tides.setdefault(datetime_ak, {})[datum['data']['type']] = \
             {_KEY_HOUR: date['hour'],
              _KEY_MINUTE: date['min'],
              _KEY_TIDE_HEIGHT: datum['data']['height']}
     return data_tides
+
+
+def _get_tomorrow_datetime_in_alaska_tz():
+    datetime_utc = datetime.datetime.utcnow().replace(tzinfo=_TIMEZONE_UTC)
+    datetime_ak = datetime_utc.astimezone(_TIMEZONE_AK)
+    datetime_tomorrow = datetime_ak + datetime.timedelta(days=1)
+    return datetime_tomorrow.year, datetime_tomorrow.month, datetime_tomorrow.day
 
 
 def _format_tide_detail_strings(data_tides):
