@@ -71,6 +71,10 @@ _KEY_TIDE_LOW = 'Low Tide'
 _KEY_HOUR = 'hour'
 _KEY_MINUTE = 'minute'
 _KEY_TIDE_HEIGHT = 'height'
+_FORECAST_PERIOD_INCLUSION = {
+    'western_kenai_peninsula': [0, 1, 2],
+    'anchorage': [1, 2]
+}
 
 # To output information
 _STRING_DAYLIGHT = """
@@ -225,7 +229,7 @@ def get_forecast():
     location_details = {}
     for key, name in _ORDER_FORECAST:
         raw_data_forecast = _get_forecast_data_from_weather_underground(key)
-        data_forecast = _format_forecast_data(raw_data_forecast)
+        data_forecast = _format_forecast_data(raw_data_forecast, _FORECAST_PERIOD_INCLUSION[key])
         location_details[key + '_detail'] = ''.join(
             _STRING_FORECAST_DETAIL.format(title=title, forecast=forecast)
             for title, forecast in data_forecast)
@@ -237,11 +241,11 @@ def _get_forecast_data_from_weather_underground(key_location):
     return json.loads(requests.get(url).text)
 
 
-def _format_forecast_data(raw_data_forecast):
+def _format_forecast_data(raw_data_forecast, include_periods):
     data_forecast = []
     for datum in raw_data_forecast['forecast']['txt_forecast']['forecastday']:
-        if datum['period'] == 4:
-            break
+        if datum['period'] not in include_periods:
+            continue
         data_forecast.append((datum['title'], datum['fcttext']))
     return data_forecast
 
@@ -261,10 +265,12 @@ def get_marine_forecast():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('key', metavar='wu_key', type=str)
     parser.add_argument('type', metavar='weather_type', type=str, choices=['daily', 'current', 'marine'],
                         help='either "daily", "current", or "marine"')
+    _KEY = parser.parse_args().key
     type_ = parser.parse_args().type
-    print('IMPORTANT:  DO NOT USE THIS SCRIPT MORE THAN ONCE EVERY HALF HOUR')
+    print('IMPORTANT:  DO NOT USE THIS SCRIPT MORE THAN ONCE EVERY TWO MINUTES')
     output = ''
     if type_ == 'daily':
         output = get_sunphase_and_tides() + get_forecast()
