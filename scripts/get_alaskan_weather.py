@@ -260,7 +260,31 @@ def get_marine_forecast():
         idx_found = [bool(re.search(location, forecast))
                      for forecast in split_text].index(True)
         ordered_forecasts.append(split_text[idx_found])
-    return ''.join(ordered_forecasts)
+    # Remove extra forecasts
+    clean_forecasts = []
+    for forecast in ordered_forecasts:
+        split_forecast = re.split('\n', forecast)
+        # Remove leading newlines and codes
+        for _ in range(3):
+            if split_forecast[0] == '' or re.search('PKZ', split_forecast[0]):
+                split_forecast.pop(0)
+        # Remove trailing newlines
+        for _ in range(2):
+            if split_forecast[-1] == '':
+                split_forecast.pop(-1)
+        # Combine content with unnecessary newlines
+        for idx in reversed(range(len(split_forecast))):
+            if split_forecast[idx] == '':  # Stop after reaching the first newline, separating forecasts from summary
+                break
+            if re.search('^\.', split_forecast[idx]) is None:  # Forecasts start with periods, e.g., ".SAT..."
+                split_forecast[idx-1] += ' ' + split_forecast[idx]
+                split_forecast.pop(idx)
+        # Remove extra forecasts
+        num_remove = list(reversed(split_forecast)).index('') -3  # 3 == Keep today, tonight, and tomorrow
+        for _ in range(num_remove):
+            split_forecast.pop(-1)
+        clean_forecasts.append('\n'.join(split_forecast))
+    return '\n\n'.join(clean_forecasts)
 
 
 if __name__ == '__main__':
