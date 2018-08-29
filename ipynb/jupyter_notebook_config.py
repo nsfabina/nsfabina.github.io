@@ -12,6 +12,8 @@ def post_save(model, os_path, contents_manager):
     if model['type'] != 'notebook':
         return # only do this for notebooks
     cwdir, filename = os.path.split(os_path)
+    if 'Untitled' in filename:
+        return
     for subdir, type_ in (('scripts', 'script'), ('html', 'html')):
         outdir = os.path.join(cwdir, subdir)
         if not os.path.isdir(outdir):
